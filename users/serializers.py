@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from users.models import User, Teacher
+from users.models import User, Teacher, Student
 
 # class UserProfileSerializer(serializers.ModelSerializer):
 #     class Meta:
@@ -13,17 +13,26 @@ class TeacherProfileSerializer(serializers.ModelSerializer):
         fields = ('subjectexprty', 'YearOfExp')
 
 
+class StudentProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = ('div', 'std', 'rollno', 'ParentileContact', 'bloodgroup',
+                  'familyIncome')
+
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     Teacherprofile = TeacherProfileSerializer(required=True)
+    Studentprofile = StudentProfileSerializer(required=True)
 
     class Meta:
         model = User
         fields = ('url', 'email', 'first_name', 'last_name', 'password',
-                  'address', 'phone', 'Teacherprofile')
+                  'address', 'phone_number', 'Teacherprofile',
+                  'Studentprofile')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        profile_data = validated_data.pop('Teacherprofile')
+        profile_data = ('Teacherprofile')
         password = validated_data.pop('password')
         user = User(**validated_data)
         user.set_password(password)

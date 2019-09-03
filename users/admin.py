@@ -20,7 +20,7 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('first_name', 'last_name')
         }),
         (_('Personal info'), {
-            'fields': ('address', 'phone')
+            'fields': ('address', 'phone_number')
         }),
         (_('Permissions'), {
             'fields': ('is_active', 'is_staff', 'is_superuser', 'groups',
@@ -34,14 +34,14 @@ class UserAdmin(BaseUserAdmin):
         'classes': ('wide', ),
         'fields': ('email', 'password1', 'password2'),
     }), )
-    list_display = ('email', 'first_name', 'last_name', 'address', 'phone',
-                    'is_staff')
+    list_display = ('email', 'first_name', 'last_name', 'address',
+                    'phone_number', 'is_staff')
     search_fields = (
         'email',
         'first_name',
         'last_name',
         'address',
-        'phone',
+        'phone_number',
     )
     ordering = ('email', )
     inlines = (TeacherProfileInline, )
