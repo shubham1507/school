@@ -2,11 +2,11 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import User, UserProfile
+from .models import User, Teacher
 
 
-class UserProfileInline(admin.StackedInline):
-    model = UserProfile
+class TeacherProfileInline(admin.StackedInline):
+    model = Teacher
     can_delete = False
 
 
@@ -18,6 +18,9 @@ class UserAdmin(BaseUserAdmin):
         }),
         (_('Personal info'), {
             'fields': ('first_name', 'last_name')
+        }),
+        (_('Personal info'), {
+            'fields': ('address', 'phone')
         }),
         (_('Permissions'), {
             'fields': ('is_active', 'is_staff', 'is_superuser', 'groups',
@@ -31,7 +34,14 @@ class UserAdmin(BaseUserAdmin):
         'classes': ('wide', ),
         'fields': ('email', 'password1', 'password2'),
     }), )
-    list_display = ('email', 'first_name', 'last_name', 'is_staff')
-    search_fields = ('email', 'first_name', 'last_name')
+    list_display = ('email', 'first_name', 'last_name', 'address', 'phone',
+                    'is_staff')
+    search_fields = (
+        'email',
+        'first_name',
+        'last_name',
+        'address',
+        'phone',
+    )
     ordering = ('email', )
-    inlines = (UserProfileInline, )
+    inlines = (TeacherProfileInline, )
