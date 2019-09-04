@@ -1,11 +1,6 @@
 from rest_framework import serializers
 from users.models import User, Teacher, Student
 
-# class UserProfileSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = UserProfile
-#         fields = ('title', 'dob', 'address', 'country', 'city', 'zip', 'photo')
-
 
 class TeacherProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,17 +22,19 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ('url', 'email', 'first_name', 'last_name', 'password',
-                  'address', 'phone_number', 'Teacherprofile',
-                  'Studentprofile')
+                  'address', 'phone_number', 'Teacherprofile')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        profile_data = ('Teacherprofile')
+
+        profile_data = validated_data.pop('Teacherprofile')
+        print(profile_data)
         password = validated_data.pop('password')
         user = User(**validated_data)
         user.set_password(password)
         user.save()
         Teacher.objects.create(user=user, **profile_data)
+        print(profile_data)
         return user
 
     def update(self, instance, validated_data):
@@ -50,11 +47,39 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         profile.subjectexprty = profile_data.get('subjectexprty',
                                                  profile.subjectexprty)
         profile.YearOfExp = profile_data.get('YearOfExp', profile.YearOfExp)
-        # profile.address = profile_data.get('address', profile.address)
-        # profile.country = profile_data.get('country', profile.country)
-        # profile.city = profile_data.get('city', profile.city)
-        # profile.zip = profile_data.get('zip', profile.zip)
-        # profile.photo = profile_data.get('photo', profile.photo)
+
         profile.save()
 
         return instance
+
+
+class UserSerializer2(serializers.HyperlinkedModelSerializer):
+
+    Studentprofile = StudentProfileSerializer(required=True)
+
+    class Meta:
+
+        model = User
+        fields = ('url', 'email', 'first_name', 'last_name', 'password',
+                  'address', 'phone_number', 'Studentprofile')
+
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        profile_data = validated_data.pop('Studentprofile')
+        password = validated_data.pop('password')
+        user = User(**validated_data)
+        user.set_password(password)
+        user.save()
+        Student.objects.create(user=user, **profile_data)
+        return user
+
+    def update(self, instance, validated_data):
+        profile_data = validated_data.pop('profile')
+        profile = instance.profile
+
+        instance.email = validated_data.get('email', instance.email)
+        instance.save()
+
+        profile.std = profile_data.get('std', profile.std)
+        profile.div = profile_data.get('div', profile.div)
