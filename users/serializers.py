@@ -22,20 +22,27 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ('url', 'email', 'first_name', 'last_name', 'password',
-                  'address', 'phone_number', 'Teacherprofile')
+                  'address', 'phone_number', 'Teacherprofile',
+                  'Studentprofile')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
 
-        profile_data = validated_data.pop('Teacherprofile')
-        print(profile_data)
+        profile_data1 = validated_data.pop('Teacherprofile')
+        profile_data2 = validated_data.pop('Studentprofile')
+
         password = validated_data.pop('password')
         user = User(**validated_data)
+
         user.set_password(password)
         user.save()
-        Teacher.objects.create(user=user, **profile_data)
-        print(profile_data)
-        return user
+        if self.context['context'] is 'teacher':
+            Teacher.objects.create(user=user, **profile_data1)
+            return user
+
+        if self.context['context'] is 'student':
+            Student.objects.create(user=user, **profile_data2)
+            return user
 
     def update(self, instance, validated_data):
         profile_data = validated_data.pop('profile')
@@ -51,35 +58,3 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         profile.save()
 
         return instance
-
-
-class UserSerializer2(serializers.HyperlinkedModelSerializer):
-
-    Studentprofile = StudentProfileSerializer(required=True)
-
-    class Meta:
-
-        model = User
-        fields = ('url', 'email', 'first_name', 'last_name', 'password',
-                  'address', 'phone_number', 'Studentprofile')
-
-        extra_kwargs = {'password': {'write_only': True}}
-
-    def create(self, validated_data):
-        profile_data = validated_data.pop('Studentprofile')
-        password = validated_data.pop('password')
-        user = User(**validated_data)
-        user.set_password(password)
-        user.save()
-        Student.objects.create(user=user, **profile_data)
-        return user
-
-    def update(self, instance, validated_data):
-        profile_data = validated_data.pop('profile')
-        profile = instance.profile
-
-        instance.email = validated_data.get('email', instance.email)
-        instance.save()
-
-        profile.std = profile_data.get('std', profile.std)
-        profile.div = profile_data.get('div', profile.div)

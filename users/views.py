@@ -1,14 +1,20 @@
 from rest_framework import viewsets
 
 from users.models import User
-from users.serializers import UserSerializer, UserSerializer2
+from users.serializers import UserSerializer
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class TeacherViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    def get_serializer_context(self):
+        return {'request': self.request, 'context': 'teacher'}
 
-class UserViewSet2(viewsets.ModelViewSet):
+
+class StudentViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserSerializer2
+    serializer_class = UserSerializer
+
+    def get_serializer_context(self):
+        return {'request': self.request, 'context': 'student'}

@@ -6,11 +6,12 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 
 class User(AbstractUser):
+
     username = models.CharField(max_length=50, blank=True, null=True)
     email = models.EmailField(_('email address'), unique=True)
     address = models.CharField(max_length=255, null=True)
     phone_number = PhoneNumberField(null=True)
-    # photo = models.ImageField(upload_to='uploads', blank=True)
+    photo = models.ImageField(upload_to='uploads', blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = [
@@ -19,19 +20,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return "{}".format(self.email)
-
-
-# class UserProfile(models.Model):
-#     user = models.OneToOneField(settings.AUTH_USER_MODEL,
-#                                 on_delete=models.CASCADE,
-#                                 related_name='profile')
-#     title = models.CharField(max_length=5)
-#     dob = models.DateField()
-#     address = models.CharField(max_length=255)
-#     country = models.CharField(max_length=50)
-#     city = models.CharField(max_length=50)
-#     zip = models.CharField(max_length=5)
-#     photo = models.ImageField(upload_to='uploads', blank=True)
 
 
 class Teacher(models.Model):
