@@ -2,7 +2,7 @@ from rest_framework import serializers
 from users.models import User, Teacher, Student
 
 
-class TeacherProfileSerializer(serializers.ModelSerializer):
+class TeacherProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Teacher
         fields = ('subjectexprty', 'YearOfExp')
